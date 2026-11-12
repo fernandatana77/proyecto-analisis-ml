@@ -4,34 +4,35 @@ import plotly.express as px
 import streamlit as st
 from deep_translator import GoogleTranslator
 
-# Configuración inicial de la página
+# Configuración de página
 st.set_page_config(
-    page_title="Analizador de Sentimientos Avanzado - Amazon",
-    page_icon="🤖",
+    page_title="Amazon Sentiment AI Studio",
+    page_icon="🛍️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# Estilos CSS profesionales y modernos
+# Estilos CSS avanzados (Modo oscuro corporativo con tarjetas estilizadas y efectos visuales)
 st.markdown(
     """
     <style>
-        .stApp { background-color: #0e1117; }
-        .main-title { font-size: 2.5rem; font-weight: 800; color: #ffffff; margin-bottom: 0px; }
-        .sub-title { color: #9ca3af; font-size: 1.1rem; }
-        .card { background-color: #161b22; padding: 20px; border-radius: 12px; border: 1px solid #30363d; }
+        .stApp { background-color: #0b0f19; color: #f3f4f6; }
+        .hero-title { font-size: 2.8rem; font-weight: 900; background: linear-gradient(90deg, #ff9900, #ff5722); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-subtitle { color: #9ca3af; font-size: 1.15rem; margin-bottom: 25px; }
+        .card-container { background: #111827; padding: 25px; border-radius: 16px; border: 1px solid #1f2937; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); }
+        .metric-card { background: #1f2937; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid #374151; }
     </style>
 """,
     unsafe_allow_html=True,
 )
 
 
-# Cargar recursos (modelo, vectorizador y dataset)
+# Cargar recursos
 @st.cache_resource
 def cargar_recursos():
-  model = joblib.load('models/sentiment_model.pkl')
-  vectorizer = joblib.load('models/vectorizer.pkl')
-  df_sample = pd.read_csv('data/amazon_reviews.csv').dropna()
+  model = joblib.load("models/sentiment_model.pkl")
+  vectorizer = joblib.load("models/vectorizer.pkl")
+  df_sample = pd.read_csv("data/amazon_reviews.csv").dropna()
   return model, vectorizer, df_sample
 
 
@@ -42,245 +43,263 @@ except Exception as e:
   sistema_listo = False
 
 # ==========================================
-# BARRA LATERAL DE NAVEGACIÓN
+# BARRA LATERAL PROFESIONAL
 # ==========================================
 st.sidebar.markdown(
-    "<h2 style='text-align: center; color: #ff9900;'>🛒 Amazon AI Lab</h2>",
+    "<h2 style='text-align: center; color: #ff9900;'>🛒 Amazon AI Studio</h2>",
+    unsafe_allow_html=True,
+)
+st.sidebar.markdown(
+    "<p style='text-align: center; color: #9ca3af; font-size: 0.85rem;'>Inteligencia"
+    " Artificial Aplicada al NLP</p>",
     unsafe_allow_html=True,
 )
 st.sidebar.markdown("---")
 
 menu = st.sidebar.radio(
-    "Menú de Navegación",
+    "Navegación del Sistema",
     [
-        "🚀 Simulador Interactivo de Reseñas",
-        "📊 Dashboard Analítico del Dataset",
+        "🚀 Simulador Interactivo de Sentimientos",
+        "📊 Dashboard Analítico Avanzado",
     ],
 )
 
 st.sidebar.markdown("---")
 st.sidebar.markdown(
-    "<p style='color: #10b981; text-align: center; font-size: 0.9rem;'>● IA Operativa"
-    " y Conectada</p>",
+    "<div style='background: #111827; padding: 12px; border-radius: 8px; border:"
+    " 1px solid #1f2937; text-align: center;'><span style='color: #10b981;'>●</span>"
+    " <b>Modelo Activo:</b> Regresión Logística<br><span style='color:"
+    " #10b981;'>●</span> <b>Traductor:</b> Multi-idioma Activo</div>",
     unsafe_allow_html=True,
 )
 
 # ==========================================
-# VISTA 1: SIMULADOR INTERACTIVO (PREDICCIÓN)
+# VISTA 1: SIMULADOR INTERACTIVO
 # ==========================================
-if menu == "🚀 Simulador Interactivo de Reseñas":
+if menu == "🚀 Simulador Interactivo de Sentimientos":
   st.markdown(
-      "<p class='main-title'>🚀 Simulador Inteligente de Opiniones</p>",
+      "<p class='hero-title'>🚀 Analizador de Opiniones en Tiempo Real</p>",
       unsafe_allow_html=True,
   )
   st.markdown(
-      "<p class='sub-text'>Prueba el modelo en tiempo real. Escribe en"
-      " <b>español o inglés</b>; el sistema traducirá y analizará la polaridad"
-      " real de la reseña.</p>",
+      "<p class='hero-subtitle'>Escribe cualquier comentario en español o"
+      " inglés. El sistema traducerá y evaluará la polaridad real de la"
+      " reseña con alta precisión.</p>",
       unsafe_allow_html=True,
   )
-  st.markdown("---")
 
-  # Botones interactivos rápidos de prueba en español
-  st.markdown("#### ⚡ Pruebas rápidas preconfiguradas:")
-  ej_col1, ej_col2, ej_col3 = st.columns(3)
+  # Botones interactivos de prueba rápida estilizados
+  st.markdown("#### ⚡ Pruebas rápidas recomendadas:")
+  b1, b2, b3 = st.columns(3)
 
-  # Estado para manejar el texto de prueba rápido
   if "texto_input" not in st.session_state:
     st.session_state.texto_input = ""
 
-  if ej_col1.button("❌ 'El producto vino dañado y no sirve'"):
-    st.session_state.texto_input = "El producto vino dañado y no sirve"
-  if ej_col2.button("😊 'Excelente calidad, superó mis expectativas'"):
+  if b1.button("❌ Probar Negativa: 'El producto vino dañado y no sirve'"):
     st.session_state.texto_input = (
-        "Excelente calidad, superó mis expectativas"
+        "El producto vino completamente dañado y no sirve para nada."
     )
-  if ej_col3.button("⚠️ 'Más o menos, tardó mucho en llegar'"):
-    st.session_state.texto_input = "Más o menos, tardó mucho en llegar"
+  if b2.button("😊 Probar Positiva: 'Excelente calidad y superó expectativas'"):
+    st.session_state.texto_input = (
+        "Me encantó este producto, superó totalmente mis expectativas."
+    )
+  if b3.button("⚠️ Probar Neutra/Crítica: 'Regular, tardó mucho en llegar'"):
+    st.session_state.texto_input = (
+        "El envío tardó demasiado y la calidad es regular."
+    )
 
-  st.markdown("")
-  col1, col2 = st.columns([1.5, 1], gap="large")
+  st.markdown("<br>", unsafe_allow_html=True)
 
-  with col1:
-    st.markdown("#### ✍️ Escribe o selecciona tu comentario:")
+  col_form, col_res = st.columns([1.2, 1], gap="large")
+
+  with col_form:
+    st.markdown(
+        "<div class='card-container'><h4>✍️ Ingrese su reseña:</h4>",
+        unsafe_allow_html=True,
+    )
     texto_usuario = st.text_area(
-        "Comentario del cliente:",
+        "Comentario:",
         value=st.session_state.texto_input,
-        placeholder="Escribe aquí tu reseña...",
-        height=140,
+        placeholder="Escribe aquí tu opinión...",
+        height=150,
+        label_visibility="collapsed",
     )
-
     analizar = st.button(
-        "🔍 Analizar Sentimiento con IA",
-        type="primary",
-        use_container_width=True,
+        "🔍 Ejecutar Análisis de IA", type="primary", use_container_width=True
     )
+    st.markdown("</div>", unsafe_allow_html=True)
 
-  with col2:
-    st.markdown("#### 📊 Panel de Diagnóstico Rápido")
-    st.info(
-        "**Traducción Automática:** Activada\n*(Traduce cualquier idioma al inglés"
-        " para garantizar que el modelo de Amazon acierte el resultado)*\n\n**Motor"
-        " Predictivo:** Regresión Logística + TF-IDF"
+  with col_res:
+    st.markdown(
+        "<div class='card-container'><h4>🎯 Panel de Diagnóstico</h4>",
+        unsafe_allow_html=True,
     )
+    if analizar:
+      if not sistema_listo:
+        st.error("⚠️ Faltan los archivos del modelo. Entrena primero.")
+      elif not texto_usuario.strip():
+        st.warning("⚠️ Ingresa un texto válido.")
+      else:
+        with st.spinner("Procesando y traduciendo con IA..."):
+          try:
+            texto_traducido = GoogleTranslator(
+                source="auto", target="en"
+            ).translate(texto_usuario)
+          except Exception:
+            texto_traducido = texto_usuario
 
-  if analizar:
-    if not sistema_listo:
-      st.error(
-          "⚠️ Modelos no encontrados. Ejecute `train_model.py` primero."
-      )
-    elif not texto_usuario.strip():
-      st.warning("⚠️ Por favor, ingrese un texto para analizar.")
-    else:
-      with st.spinner(
-          "Traduciendo y procesando sentimiento con el modelo..."
-      ):
-        try:
-          # Traducir automáticamente al inglés para que el modelo entrenado en inglés no falle
-          texto_traducido = GoogleTranslator(
-              source="auto", target="en"
-          ).translate(texto_usuario)
-        except Exception:
-          texto_traducido = texto_usuario  # Fallback si falla el internet de traducción
+          X_vec = vectorizer.transform([texto_traducido])
+          pred = model.predict(X_vec)[0]
+          prob = model.predict_proba(X_vec)[0]
 
-        # Vectorizar e inferir
-        X_vec = vectorizer.transform([texto_traducido])
-        pred = model.predict(X_vec)[0]
-        prob = model.predict_proba(X_vec)[0]
+        st.markdown("<hr style='border-color: #374151;'>", unsafe_allow_html=True)
 
-      st.markdown("---")
-      st.markdown("### 🎯 Resultados Detallados de la Inferencia")
-
-      res1, res2 = st.columns(2)
-
-      with res1:
         if pred == 1:
           st.success(
-              "### Sentimiento: POSITIVO 😊\n\nEl cliente expresa una"
-              " experiencia favorable con el producto."
+              "### Sentimiento: POSITIVO 😊\nEl cliente muestra alta"
+              " satisfacción."
           )
+          confianza = prob[1] * 100
         else:
           st.error(
-              "### Sentimiento: NEGATIVO ❌\n\nEl cliente reporta fallas,"
-              " descontento o mala calidad."
+              "### Sentimiento: NEGATIVO ❌\nEl cliente reporta fallas o"
+              " descontento."
           )
+          confianza = prob[0] * 100
 
-      with res2:
-        confianza = prob[1] * 100 if pred == 1 else prob[0] * 100
         st.metric(
-            label="Grado de Confianza del Modelo",
+            label="Nivel de Confianza del Modelo",
             value=f"{confianza:.2f}%",
-            delta="Alta Certeza" if confianza > 70 else "Revisar Caso",
+            delta="Alta Certeza",
         )
-        if texto_usuario != texto_traducido:
-          st.caption(
-              f"🌐 *Texto traducido para el motor:* '{texto_traducido}'"
-          )
+        st.caption(
+            f"🌐 *Traducción interna analizada:* `{texto_traducido}`"
+        )
+    else:
+      st.info(
+          "👉 Ingrese un texto a la izquierda y presione el botón para ver el"
+          " análisis de sentimiento en tiempo real."
+      )
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# VISTA 2: DASHBOARD ANALÍTICO INTERACTIVO
+# VISTA 2: DASHBOARD ANALÍTICO AVANZADO
 # ==========================================
-elif menu == "📊 Dashboard Analítico del Dataset":
+elif menu == "📊 Dashboard Analítico Avanzado":
   st.markdown(
-      "<p class='main-title'>📊 Dashboard Exploratorio de Datos</p>",
+      "<p class='hero-title'>📊 Dashboard Exploratorio de Datos</p>",
       unsafe_allow_html=True,
   )
   st.markdown(
-      "<p class='sub-text'>Interactúa con el dataset real de Amazon para"
-      " descubrir patrones de calificación y comportamiento de los clientes.</p>",
+      "<p class='hero-subtitle'>Analiza el comportamiento y distribución real"
+      " de las reseñas del dataset de Amazon.</p>",
       unsafe_allow_html=True,
   )
-  st.markdown("---")
 
-  # Filtro interactivo en el dashboard
-  st.markdown("#### 🎛️ Filtros Interactivos del Dataset")
-  filtro_estrellas = st.slider(
-      "Selecciona el rango de calificaciones (Estrellas) a visualizar:",
-      min_value=1,
-      max_value=5,
-      value=(1, 5),
+  # Filtro interactivo superior
+  st.markdown(
+      "<div class='card-container'><h4>🎛️ Panel de Control de Datos</h4>",
+      unsafe_allow_html=True,
   )
+  rango_estrellas = st.slider(
+      "Filtrar por rango de calificaciones (Estrellas):", 1, 5, (1, 5)
+  )
+  st.markdown("</div>", unsafe_allow_html=True)
 
   df_filtrado = df_sample[
-      (df_sample["overall"] >= filtro_estrellas[0])
-      & (df_sample["overall"] <= filtro_estrellas[1])
+      (df_sample["overall"] >= rango_estrellas[0])
+      & (df_sample["overall"] <= rango_estrellas[1])
   ].head(5000)
 
-  # KPIs dinámicos basados en el filtro
-  kpi1, kpi2, kpi3, kpi4 = st.columns(4)
-  with kpi1:
-    st.metric(
-        label="Registros Filtrados",
-        value=f"{len(df_filtrado):,}",
-        delta="Dataset Dinámico",
+  st.markdown("<br>", unsafe_allow_html=True)
+
+  # Métricas KPIs visuales estilizadas
+  k1, k2, k3, k4 = st.columns(4)
+  with k1:
+    st.markdown(
+        f"<div class='metric-card'><h4>Registros</h4><h2>{len(df_filtrado):,}</h2></div>",
+        unsafe_allow_html=True,
     )
-  with kpi2:
-    promedio_estrellas = (
+  with k2:
+    prom = (
         df_filtrado["overall"].mean() if len(df_filtrado) > 0 else 0
     )
-    st.metric(
-        label="Calificación Promedio",
-        value=f"{promedio_estrellas:.2f} ⭐",
-        delta="Filtro Activo",
+    st.markdown(
+        f"<div class='metric-card'><h4>Promedio</h4><h2>{prom:.2f} ⭐</h2></div>",
+        unsafe_allow_html=True,
     )
-  with kpi3:
-    st.metric(
-        label="Accuracy del Modelo", value="88.42%", delta="Validado en Test"
+  with k3:
+    st.markdown(
+        "<div class='metric-card'><h4>Accuracy</h4><h2>88.42%</h2></div>",
+        unsafe_allow_html=True,
     )
-  with kpi4:
-    st.metric(
-        label="Tiempo de Inferencia", value="< 10 ms", delta="Tiempo Real"
+  with k4:
+    st.markdown(
+        "<div class='metric-card'><h4>Latencia</h4><h2>< 10ms</h2></div>",
+        unsafe_allow_html=True,
     )
 
-  st.markdown("---")
+  st.markdown("<br>", unsafe_allow_html=True)
 
-  # Gráficos interactivos avanzados con Plotly
-  g_col1, g_col2 = st.columns(2)
+  # Gráficos profesionales con Plotly (Diseño oscuro elegante)
+  c1, c2 = st.columns(2, gap="large")
 
-  with g_col1:
-    st.markdown("#### 📈 Distribución de Calificaciones Filtradas")
+  with c1:
+    st.markdown(
+        "<div class='card-container'><h4>📈 Distribución de Calificaciones</h4>",
+        unsafe_allow_html=True,
+    )
     if len(df_filtrado) > 0:
-      fig_hist = px.histogram(
+      fig = px.histogram(
           df_filtrado,
           x="overall",
           nbins=5,
           color_discrete_sequence=["#ff9900"],
           template="plotly_dark",
       )
-      fig_hist.update_layout(
-          xaxis_title="Estrellas",
-          yaxis_title="Cantidad de Reseñas",
-          margin=dict(l=20, r=20, t=20, b=20),
+      fig.update_layout(
+          plot_bgcolor="rgba(0,0,0,0)",
+          paper_bgcolor="rgba(0,0,0,0)",
+          margin=dict(l=10, r=10, t=10, b=10),
       )
-      st.plotly_chart(fig_hist, use_container_width=True)
-    else:
-      st.warning("No hay datos para el rango seleccionado.")
+      st.plotly_chart(fig, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-  with g_col2:
-    st.markdown("#### ⚖️ Polaridad (Positivo vs Negativo)")
+  with c2:
+    st.markdown(
+        "<div class='card-container'><h4>⚖️ Proporción de Polaridad</h4>",
+        unsafe_allow_html=True,
+    )
     if len(df_filtrado) > 0:
-      df_filtrado_copy = df_filtrado.copy()
-      df_filtrado_copy["polaridad"] = df_filtrado_copy["overall"].apply(
+      df_temp = df_filtrado.copy()
+      df_temp["polaridad"] = df_temp["overall"].apply(
           lambda x: "Positivo (4-5 ⭐)" if x >= 4 else "Negativo (1-2 ⭐)"
       )
-      fig_pie = px.pie(
-          df_filtrado_copy,
+      fig2 = px.pie(
+          df_temp,
           names="polaridad",
-          hole=0.5,
+          hole=0.6,
           color_discrete_sequence=["#10b981", "#ef4444"],
           template="plotly_dark",
       )
-      fig_pie.update_layout(
-          margin=dict(l=20, r=20, t=20, b=20),
+      fig2.update_layout(
+          plot_bgcolor="rgba(0,0,0,0)",
+          paper_bgcolor="rgba(0,0,0,0)",
+          margin=dict(l=10, r=10, t=10, b=10),
           legend=dict(
               orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5
           ),
       )
-      st.plotly_chart(fig_pie, use_container_width=True)
+      st.plotly_chart(fig2, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-  st.markdown("---")
-  st.markdown("#### 🔍 Explorador de Reseñas del Dataset")
+  st.markdown("<br>", unsafe_allow_html=True)
+  st.markdown(
+      "<div class='card-container'><h4>🔍 Muestra de Reseñas del Dataset</h4>",
+      unsafe_allow_html=True,
+  )
   st.dataframe(
       df_filtrado[["reviewText", "overall", "reviewTime"]].head(10),
       use_container_width=True,
   )
+  st.markdown("</div>", unsafe_allow_html=True)
